@@ -75,7 +75,7 @@ class ExerciseGraph extends React.Component {
     }
 
     async getExercises(){
-      const response = await fetch('/exercises/rendus/' + this.props.match.params.idExercise, 
+      const response = await fetch(API_HOST + '/exercises/rendus/' + this.props.match.params.idExercise, 
         {
           method: 'GET'
       })
