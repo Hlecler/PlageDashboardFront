@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 
 import { Button } from 'reactstrap';
-
+//import { API_HOST} from '../../config.json';
 class UserGraph extends React.Component {
   constructor(){
     super();

@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-
+//import { API_HOST} from '../../config.json';
 
 class ExerciseGraph extends React.Component {
   constructor(){

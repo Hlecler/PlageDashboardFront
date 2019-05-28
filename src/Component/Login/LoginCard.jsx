@@ -1,7 +1,7 @@
 // Modules
 import React from 'react';
 import{Card , CardHeader, CardBody } from 'reactstrap';
-
+//import { API_HOST} from '../../config.json';
 // css
 import "../../style/login.css";
 

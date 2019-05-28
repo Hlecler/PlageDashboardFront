@@ -1,4 +1,4 @@
 {
-    "API_HOST" : "http://localhost:5000",
+    "API_HOST" : "http://plagedashboardapi.herokuapp.com",
     "TIMEOUT" : 2500
 }
