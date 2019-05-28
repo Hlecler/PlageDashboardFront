@@ -1,0 +1,55 @@
+.NavBar{
+  background: rgba(248, 247, 250, 0.644);
+  box-shadow: 10px 5px 20px #22284d;
+  border: 0px;
+}
+.NavBarHomePage{
+  background: transparent;
+  box-shadow: 0px 0px 0px #888888;
+  border: 0px;
+}
+.navbar-light  .navbar-brand {
+  max-width: 100%;
+  margin-left: 5%;
+}
+.navbar-light  .navbar-brand>img {
+  padding: 0;
+  margin:0;
+-webkit-filter: drop-shadow(5px 5px 2px rgba(54, 54, 126, 0.281));
+}
+.NavBar a, .NavBarHomePage a{
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #004878;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.NavBar a:hover, .NavBarHomePage a:hover{
+  color: #0069da;
+  text-decoration: none;
+}
+
+.addListInput{
+  margin-left:20px;
+}
+
+.background {
+  /* = background image div */ 
+  content: "";
+  top:0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height:100%; 
+  /* Center and scale the image nicely */
+  background-size:cover ;
+  background-repeat: no-repeat;
+  position: fixed;
+  background-attachment: scroll;
+  -webkit-filter: blur(2px) grayscale(0.45) hue-rotate(10deg);
+}
+
+.full-width {
+  min-width: 100%;
+}
