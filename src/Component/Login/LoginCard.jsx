@@ -1,7 +1,7 @@
 // Modules
 import React from 'react';
 import{Card , CardHeader, CardBody } from 'reactstrap';
-//import { API_HOST} from '../../config.json';
+import { API_HOST} from '../../config.json';
 // css
 import "../../style/login.css";
 
@@ -77,7 +77,7 @@ class LoginCard extends React.Component {
     const cleanPassword = password && password.replace(/(^\s*)|(\s*$)/g, "")
     const cleanId = id && id.replace(/(^\s*)|(\s*$)/g, "");
     if (cleanPassword && cleanId) {
-      const response = await fetch('/login', 
+      const response = await fetch(API_HOST +'/login', 
       {
         method: 'POST',
         headers: {

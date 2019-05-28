@@ -1,6 +1,6 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-//import { API_HOST} from '../../config.json';
+import { API_HOST} from '../../config.json';
 
 class ExerciseGraph extends React.Component {
   constructor(){
@@ -46,7 +46,7 @@ class ExerciseGraph extends React.Component {
 
 
       async getUser() {
-        const response = await fetch('/user/' + this.props.match.params.idUser, 
+        const response = await fetch(API_HOST + '/user/' + this.props.match.params.idUser, 
         {
           method: 'GET'
       })

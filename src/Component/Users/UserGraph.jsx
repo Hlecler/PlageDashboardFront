@@ -2,7 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 
 import { Button } from 'reactstrap';
-//import { API_HOST} from '../../config.json';
+import { API_HOST} from '../../config.json';
 class UserGraph extends React.Component {
   constructor(){
     super();
@@ -47,7 +47,7 @@ class UserGraph extends React.Component {
 
 
       async getUser() {
-        const response = await fetch('/user/' + this.props.match.params.id, 
+        const response = await fetch(API_HOST + '/user/' + this.props.match.params.id, 
         {
           method: 'GET'
       })
@@ -76,7 +76,7 @@ class UserGraph extends React.Component {
     }
 
     async getExercises(){
-      const response = await fetch('/user/rendus/' + this.props.match.params.id, 
+      const response = await fetch(API_HOST + '/user/rendus/' + this.props.match.params.id, 
         {
           method: 'GET'
       })
