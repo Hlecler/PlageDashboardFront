@@ -1,12 +1,15 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
-
 import { Button } from 'reactstrap';
 import { API_HOST} from '../../config.json';
+import axios from 'axios';
 class UserGraph extends React.Component {
   constructor(){
     super();
     
+    const client = axios.create({
+      baseURL : API_HOST
+    })
 
     this.state = {
       user: null,
@@ -38,9 +41,9 @@ class UserGraph extends React.Component {
     };
   }
 
-    componentDidMount() {
+    componentWillMount() {
       this.getUser();
-      this.getExercises()
+      this.getExercises();
       this.refreshGraphic();
       setInterval(this.getExercises(), 1000);
     } 
@@ -76,16 +79,35 @@ class UserGraph extends React.Component {
     }
 
     async getExercises(){
-      const response = await fetch(API_HOST + '/user/rendus/' + this.props.match.params.id, 
+      const url = '/user/rendus/' + this.props.match.params.id;
+      /*
+      fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        }
+      }).then((response) => {
+        if (response.ok) {
+          response.json().then(json => {
+            this.setState({exercises : json});
+          });
+        }
+      }).catch(error => { this.setState({error : "TEST"})});
+      
+     this.setState({error : url})
+    */
+    
+      const response = await fetch(url, 
         {
-          method: 'GET'
+          method: 'GET',
       })
       if (response.ok){
+        
         const body = await response.json();
-        this.state.exercises = body;
+        this.setState({exercises : body})
       }
       else {
-        this.state.error += " Pas d'exercices trouvés. "
+        this.setState({error : " Pas d'exercices trouvés. "});
       }
     }
     
