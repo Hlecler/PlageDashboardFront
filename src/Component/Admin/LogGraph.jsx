@@ -12,15 +12,15 @@ class LogGraph extends React.Component {
       user: null,
       error: '',
       layout: {
-        xaxis : {'type': 'category'},
-        title : "Comparaison de votre score avec les autres étudiants",
+        xaxis : {'title': 'Jour'},
+        title : "Nombre de log par jour",
         datarevision: 0,
       },
       revision: 0,
-      exercises: null,
+      logs: null,
       data : [
         {type: 'bar', x: [], y: [],
-       name : "Exercices",
+       name : "Logs",
        marker : {'color' : []}
        },
       ]
@@ -28,109 +28,53 @@ class LogGraph extends React.Component {
   }
 
     componentDidMount() {
-      this.getUser().then(
-      this.refreshGraphic());
-      setInterval(this.refreshGraphic(), 100);
+      this.refreshGraphic()
+      setInterval(this.refreshGraphic(), 1000);
     } 
 
 
-      async getUser() {
-        const response = await fetch(API_HOST + '/user/' + this.props.match.params.idUser, 
-        {
-          method: 'GET'
-      })
-      if (response.ok){
-      
-        const body = await response.json()
-        this.setState({user : body});
-      }
-      else {
-        this.setState({error : " Pas d'étudiant trouvé."});
-      }
-      }
-
-    getBarColor(mark) {
-      var red = 0;
-      var green = 0;
-      if (mark <10){
-        red = 255;
-        green = mark * 25.5;
-      }
-      else{
-        green = 255;
-        red = 255 - (mark-10)*25.5;
-      }
-      return 'rgba(' + red + ',' + green + ',0,1)'
-    }
-
-    async getExercises(){
-      const response = await fetch(API_HOST + '/exercises/rendus/' + this.props.match.params.idExercise, 
+    async getLogs(){
+      const response = await fetch(API_HOST + '/logs', 
         {
           method: 'GET'
       })
       if (response.ok){
         const body = await response.json();
-        this.setState({exercises : body});
+        this.setState({logs : body});
       }
       else {
-        this.setState({error : " Pas d'exercices trouvés"});
+        this.setState({error : "Pas de logs trouvés"});
       }
     }
     
-    async getExercisesValue(){
+    async getLogsNumber(){
       this.setState({data : [
         {type: 'bar', x: [], y: [],
-       name : "Exercice ",
+       name : "Logs ",
        marker : {'color' : []}
        },
       ]});
-        await this.getExercises();
+        await this.getLogs();
         var data = this.state.data;
-        this.state.exercises.forEach(e => {
-          if (e.user_id ===  this.state.user.user_id){
-            var index = data[0].x.indexOf("Vous");
+        this.state.logs.forEach(l => {
+            var index = this.state.data[0].x.indexOf(l.consult_date);
             if (index === -1){
-              data[0].x.push("Vous");
-              data[0].y.push(e.mark*5);
-              data[0].marker['color'].push(this.getBarColor(e.mark))
+              data[0].x.push(l.consult_date);
+              data[0].y.push(1);
+              data[0].marker['color'].push('rgba(0,0,1,1)')
             }
             else{
-              data[0].y[index] = e.mark*5;
-              data[0].marker['color'][index] = (this.getBarColor(e.mark))
+              data[0].y[index] += 1;
             }
-          }
-          else{
-            index = this.state.data[0].x.indexOf("Elève " + e.user_id);
-          
-            if (index === -1){
-              if (e.user_id ===  this.state.user.user_id){
-                data[0].x.push("Vous");
-              }
-              else {
-                data[0].x.push("Elève " + e.user_id);
-              }
-              
-              data[0].y.push(e.mark*5);
-              data[0].marker['color'].push(this.getBarColor(e.mark))
-            }
-            else{
-              data[0].y[index] = e.mark*5;
-              data[0].marker['color'][index] = (this.getBarColor(e.mark))
-            }
-          }
-
-          
         })
         this.setState({data : data});
       }
 
       
       async refreshGraphic  () {
-        await this.getExercisesValue();
+        await this.getLogsNumber();
         this.setState({ revision: this.state.revision + 1 });
         this.state.layout.datarevision += 1;
-
-        
       }
 
 
@@ -138,7 +82,6 @@ class LogGraph extends React.Component {
         this.data = React.createRef()
          return (
            <div>
-             <h3>{"Comparaison sur l'exercice n°" + this.props.match.params.idExercise}</h3>
              <div id="PlotGraph">
               <Plot
                data={this.state.data}

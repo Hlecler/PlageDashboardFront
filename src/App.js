@@ -15,6 +15,7 @@ import UserGraphImg from './Component/Users/UserGraphImg';
 import ExerciseGraph from './Component/Exercises/ExerciseGraph'
 import ExercisesGraphImg from './Component/Exercises/ExercisesGraphImg'
 import TeacherExoGraph from './Component/Teacher/TeacherExoGraph';
+import LogGraph from './Component/Admin/LogGraph';
 
 class App extends Component {
   constructor(props) {
@@ -42,6 +43,8 @@ class App extends Component {
             <Route path='/graph/image/exercice/:idUser/:idExercise' component={ExercisesGraphImg}/>
 
             <Route path="/graph/teacher/:idExercise" component={TeacherExoGraph} />
+
+            <Route path="/graph/admin/logs" component={LogGraph} />
           </Switch>
         </div>
       </Router>
