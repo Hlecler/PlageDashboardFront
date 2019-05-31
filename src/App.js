@@ -27,21 +27,18 @@ class App extends Component {
         
       <Router>
         <div>
-          
-          <Route component={NavBar}/>
+            <Route component={NavBar}/>
           <Switch>
             <Route path='/' exact component={Homepage}/>
             <Route path='/login' component={LoginCard} />
             <Route path='/logout' component={LogoutCard} />
             <Route path='/home' component={Home}/>
             
-            <Route path='/user/:id' component={UserGraph}/>
-            <Route path='/image/user/:id' component={UserGraphImg}/>
+            <Route path='/graph/user/:id' component={UserGraph}/>
+            <Route path='/graph/image/user/:id' component={UserGraphImg}/>
             
-            <Route path="/exercice/:idUser/:idExercise" component={ExerciseGraph} />
-            <Route path='/image/exercice/:idUser/:idExercise' component={ExercisesGraphImg}/>
-            <Route path='/user/:id/exercices' component={() => { 
-              window.location.href = 'https://example.com/1234';}}/>
+            <Route path="/graph/exercice/:idUser/:idExercise" component={ExerciseGraph} />
+            <Route path='/graph/image/exercice/:idUser/:idExercise' component={ExercisesGraphImg}/>
           </Switch>
         </div>
       </Router>

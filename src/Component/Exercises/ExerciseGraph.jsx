@@ -23,7 +23,7 @@ class ExerciseGraph extends React.Component {
       }, 
       layout: {
         xaxis : {'type': 'category'},
-        title:'Exercices',
+        title : "Comparaison de votre score avec les autres élèves",
         datarevision: 0,
       },
       revision: 0,
@@ -53,10 +53,10 @@ class ExerciseGraph extends React.Component {
       if (response.ok){
       
         const body = await response.json()
-        this.state.user = body;
+        this.setState({user : body});
       }
       else {
-        this.state.error += " Pas d'utilisateur trouvé."
+        this.setState({error : " Pas d'élève trouvé."});
       }
       }
 
@@ -81,17 +81,17 @@ class ExerciseGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.state.exercises = body;
+        this.setState({exercises : body});
       }
       else {
-        this.state.error += " Pas d'exercices trouvés. "
+        this.setState({error : " Pas d'exercices trouvés"});
       }
     }
     
     async getExercisesValue(){
       this.state.data = [
         {type: 'bar', x: [], y: [],
-       name : "Exercices",
+       name : "Exercice ",
        marker : {'color' : []}
        },
       ]
@@ -111,14 +111,14 @@ class ExerciseGraph extends React.Component {
             }
           }
           else{
-            index = this.state.data[0].x.indexOf("Utilisateur " + e.user_id);
+            index = this.state.data[0].x.indexOf("Elève " + e.user_id);
           
             if (index === -1){
               if (e.user_id ===  this.state.user.user_id){
                 data[0].x.push("Vous");
               }
               else {
-                data[0].x.push("Utilisateur " + e.user_id);
+                data[0].x.push("Elève " + e.user_id);
               }
               
               data[0].y.push(e.mark*5);
@@ -158,9 +158,9 @@ class ExerciseGraph extends React.Component {
             }
           }
           else {
-            index = data[0].x.indexOf("Utilisateur " + e.user_id);
+            index = data[0].x.indexOf("Elève " + e.user_id);
             if (index === -1){
-              data[0].x.push("Utilisateur " + e.user_id)
+              data[0].x.push("Elève " + e.user_id)
               data[0].y.push(1);
               data[0].marker['color'].push(this.getBarColor(e.mark))
             }
@@ -169,8 +169,6 @@ class ExerciseGraph extends React.Component {
               data[0].marker['color'][index] = (this.getBarColor(e.mark))
             }
           }
-          //var index = data[0].x.indexOf("Utilisateur " + e.user_id);
-
         })
         this.setState({data : data});
       }

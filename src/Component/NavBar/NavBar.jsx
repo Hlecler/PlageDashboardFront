@@ -5,7 +5,7 @@ import { Navbar, Nav, NavItem } from 'reactstrap';
 import client from '../../request/client';
 
 const NavBar = ({ location }) => (
-  <div className={location.pathname === '/' ? "NavBarHomePage" : "NavBar"}>
+  <div className={!location.pathname.includes('graph') ? "NavBar" : "NavBarHidden"}>
   <Navbar light expand="md">
     <NavItem>
       <NavLink to="/" >Plage DashBoard</NavLink>

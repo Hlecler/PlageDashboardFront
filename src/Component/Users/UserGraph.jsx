@@ -2,19 +2,16 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { Button } from 'reactstrap';
 import { API_HOST} from '../../config.json';
-import axios from 'axios';
 class UserGraph extends React.Component {
   constructor(){
     super();
     
-    const client = axios.create({
-      baseURL : API_HOST
-    })
+
 
     this.state = {
       user: null,
       error: '',
-      mode: 1,
+      mode: 0,
       line1: {
         x: [-3, -2, -1],
         y: [1, 2, 3],
@@ -79,7 +76,7 @@ class UserGraph extends React.Component {
     }
 
     async getExercises(){
-      const url = '/user/rendus/' + this.props.match.params.id;
+      const url = API_HOST + '/user/rendus/' + this.props.match.params.id;
       /*
       fetch(url, {
         method: 'GET',

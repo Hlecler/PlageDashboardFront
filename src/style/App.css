@@ -3,6 +3,9 @@
   box-shadow: 10px 5px 20px #22284d;
   border: 0px;
 }
+.NavBarHidden{
+  display: none;
+}
 .NavBarHomePage{
   background: transparent;
   box-shadow: 0px 0px 0px #888888;
