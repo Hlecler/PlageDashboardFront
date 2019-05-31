@@ -1,4 +1,4 @@
 {
-    "API_HOST" : "https://polar-ravine-14967.herokuapp.com",
+    "API_HOST" : "http://plagedashboardapi.igpolytech.fr",
     "TIMEOUT" : 2500
 }
