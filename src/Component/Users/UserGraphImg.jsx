@@ -7,8 +7,6 @@ import {Button} from 'reactstrap';
 class UserGraphImg extends React.Component {
 
 
-    componentDidMount(){
-    }
     async saveImage() {
         domtoimage.toBlob(document.getElementById("PlotGraph"))
         .then(function (blob) {

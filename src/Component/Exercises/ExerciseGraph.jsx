@@ -2,6 +2,7 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { API_HOST} from '../../config.json';
 
+
 class ExerciseGraph extends React.Component {
   constructor(){
     super();
@@ -10,17 +11,6 @@ class ExerciseGraph extends React.Component {
     this.state = {
       user: null,
       error: '',
-      mode: 1,
-      line1: {
-        x: [-3, -2, -1],
-        y: [1, 2, 3],
-        name: 'Line 1'
-      },
-      line2: {
-        x: [1, 2, 3],
-        y: [-3, -2, -1],
-        name: 'Line 2'
-      }, 
       layout: {
         xaxis : {'type': 'category'},
         title : "Comparaison de votre score avec les autres élèves",
@@ -38,10 +28,9 @@ class ExerciseGraph extends React.Component {
   }
 
     componentDidMount() {
-      this.getUser();
-      this.getExercises()
-      this.refreshGraphic();
-      setInterval(this.getExercises(), 1000);
+      this.getUser().then(
+      this.refreshGraphic());
+      setInterval(this.refreshGraphic(), 100);
     } 
 
 
@@ -89,12 +78,12 @@ class ExerciseGraph extends React.Component {
     }
     
     async getExercisesValue(){
-      this.state.data = [
+      this.setState({data : [
         {type: 'bar', x: [], y: [],
        name : "Exercice ",
        marker : {'color' : []}
        },
-      ]
+      ]});
         await this.getExercises();
         var data = this.state.data;
         this.state.exercises.forEach(e => {
@@ -135,43 +124,6 @@ class ExerciseGraph extends React.Component {
         this.setState({data : data});
       }
 
-      async getExercisesNumber() {
-        this.state.data = [
-          {type: 'bar', x: [], y: [],
-         name : "Exercices",
-         marker : {'color' : []}
-         },
-        ]
-        await this.getExercises();
-        var data = this.state.data;
-        this.state.exercises.forEach(e => {
-          if (e.user_id ===  this.state.user.user_id){
-            var index = data[0].x.indexOf("Vous");
-            if (index === -1){
-              data[0].x.push("Vous");
-              data[0].y.push(1);
-              data[0].marker['color'].push(this.getBarColor(e.mark))
-            }
-            else{
-              data[0].y[index] +=1
-              data[0].marker['color'][index] = (this.getBarColor(e.mark))
-            }
-          }
-          else {
-            index = data[0].x.indexOf("Elève " + e.user_id);
-            if (index === -1){
-              data[0].x.push("Elève " + e.user_id)
-              data[0].y.push(1);
-              data[0].marker['color'].push(this.getBarColor(e.mark))
-            }
-            else{
-              data[0].y[index] +=1
-              data[0].marker['color'][index] = (this.getBarColor(e.mark))
-            }
-          }
-        })
-        this.setState({data : data});
-      }
       
       async refreshGraphic  () {
         await this.getExercisesValue();
@@ -186,6 +138,7 @@ class ExerciseGraph extends React.Component {
         this.data = React.createRef()
          return (
            <div>
+             <h3>{"Comparaison sur l'exercice n°" + this.props.match.params.idExercise}</h3>
              <div id="PlotGraph">
               <Plot
                data={this.state.data}

@@ -1,12 +1,14 @@
 // Modules
 import React from 'react';
+import { Button } from 'reactstrap';
 
 // http
 import client from '../../request/client';
 
 // Styles
 import '../../style/home.css';
-import UserGraph from '../Users/UserGraph';
+
+
 
 class Home extends React.Component{
   constructor(){
@@ -16,6 +18,9 @@ class Home extends React.Component{
     };
   }
 
+  async handleExercices() {
+    window.location = '/graph/image/user/' + client.plageId
+  }
 
   componentDidMount(){
     if(!client.me){
@@ -31,7 +36,17 @@ class Home extends React.Component{
         <h3>Bonjour {client.me}</h3>
       </div>
       <div>
-        <UserGraph/>
+      {client.plageId ? 
+        <div>
+          <h3>Identifiant Plage : {client.plageId} </h3>
+          <Button onClick={this.handleExercices} color="primary">Vos résultats d'exercices</Button>{' '}
+        </div>
+      :
+      <div>
+        <h3>Pas d'identifiants Plage trouvés.</h3>
+      </div>
+      }  
+
       </div>
       <p>{this.state.warning}</p>
     </div>
@@ -42,5 +57,5 @@ class Home extends React.Component{
 
 
 
-// Export connected Components
+// Export components
 export default Home;

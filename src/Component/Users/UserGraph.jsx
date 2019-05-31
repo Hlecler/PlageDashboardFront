@@ -2,29 +2,19 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { Button } from 'reactstrap';
 import { API_HOST} from '../../config.json';
+
 class UserGraph extends React.Component {
   constructor(){
     super();
     
 
-
     this.state = {
       user: null,
       error: '',
       mode: 0,
-      line1: {
-        x: [-3, -2, -1],
-        y: [1, 2, 3],
-        name: 'Line 1'
-      },
-      line2: {
-        x: [1, 2, 3],
-        y: [-3, -2, -1],
-        name: 'Line 2'
-      }, 
       layout: {
         xaxis : {'type': 'category'},
-        title:'Exercices',
+        title:"Vos résultats d'exercices",
         datarevision: 0,
       },
       revision: 0,
@@ -40,11 +30,9 @@ class UserGraph extends React.Component {
 
     componentWillMount() {
       this.getUser();
-      this.getExercises();
       this.refreshGraphic();
-      setInterval(this.getExercises(), 1000);
+      setInterval(this.refreshGraphic(), 1000);
     } 
-
 
       async getUser() {
         const response = await fetch(API_HOST + '/user/' + this.props.match.params.id, 
@@ -76,24 +64,7 @@ class UserGraph extends React.Component {
     }
 
     async getExercises(){
-      const url = API_HOST + '/user/rendus/' + this.props.match.params.id;
-      /*
-      fetch(url, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        }
-      }).then((response) => {
-        if (response.ok) {
-          response.json().then(json => {
-            this.setState({exercises : json});
-          });
-        }
-      }).catch(error => { this.setState({error : "TEST"})});
-      
-     this.setState({error : url})
-    */
-    
+      const url = API_HOST + '/user/rendus/' + this.props.match.params.id;    
       const response = await fetch(url, 
         {
           method: 'GET',
@@ -109,12 +80,12 @@ class UserGraph extends React.Component {
     }
     
     async getExercisesValue(){
-      this.state.data = [
+      this.setState({data :[
         {type: 'bar', x: [], y: [],
        name : "Exercices",
        marker : {'color' : []}
        },
-      ]
+      ] })
         await this.getExercises();
         var data = this.state.data;
         this.state.exercises.forEach(e => {
@@ -132,20 +103,25 @@ class UserGraph extends React.Component {
           }
           
         })
+        var layout = this.state.layout;
+        layout.title = "Vos résultats d'exercices"
+        this.setState({layout : layout});
         this.setState({data : data});
       }
 
       async getExercisesNumber() {
-        this.state.data = [
+        
+        this.setState({data :[
           {type: 'bar', x: [], y: [],
          name : "Exercices",
          marker : {'color' : []}
          },
-        ]
+        ] })
         await this.getExercises();
         var data = this.state.data;
         this.state.exercises.forEach(e => {
           var index = data[0].x.indexOf("Exercice " + e.ex_id);
+            
           if (index === -1){
             data[0].x.push("Exercice " + e.ex_id);
             data[0].y.push(1);
@@ -154,9 +130,12 @@ class UserGraph extends React.Component {
           else{
             data[0].y[index] +=1
             data[0].marker['color'][index] = (this.getBarColor(e.mark))
-          }
+          } 
         })
         this.setState({data : data});
+        var layout = this.state.layout;
+        layout.title = "Vos nombres de tentatives à chaque exercice"
+        this.setState({layout : layout});
       }
       
       async refreshGraphic  () {
@@ -169,9 +148,7 @@ class UserGraph extends React.Component {
           await this.getExercisesNumber();
           this.setState({ revision: this.state.revision + 1 });
           this.state.layout.datarevision += 1;
-        }
-
-        
+        }  
       }
 
       
@@ -195,7 +172,6 @@ class UserGraph extends React.Component {
         this.data = React.createRef()
          return (
            <div>
-             <Button onClick={this.handleIntrospection} color="primary">Introspection</Button>{' '}
              <div id="PlotGraph">
               <Plot
                data={this.state.data}
@@ -204,9 +180,10 @@ class UserGraph extends React.Component {
                graphDiv="graph"
              />
              </div>
+             <Button onClick={this.handleIntrospection} variant="primary">Introspection</Button>{' '}
              <span className="error">{this.state.error}</span>
            </div>
          );
       }
     }
-export default UserGraph;
+export default UserGraph; 

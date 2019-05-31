@@ -53,6 +53,7 @@ client.setCredentials = (credentials) => {
   localStorage && localStorage.setItem("plageConnect", JSON.stringify(credentials));
   client.me = credentials.userId;
   client.credentials = credentials;
+  client.plageId = credentials.plageId;
   client.setJWT(credentials.token);
   return client;
 }

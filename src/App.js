@@ -14,6 +14,7 @@ import UserGraph from './Component/Users/UserGraph';
 import UserGraphImg from './Component/Users/UserGraphImg';
 import ExerciseGraph from './Component/Exercises/ExerciseGraph'
 import ExercisesGraphImg from './Component/Exercises/ExercisesGraphImg'
+import TeacherExoGraph from './Component/Teacher/TeacherExoGraph';
 
 class App extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class App extends Component {
         
       <Router>
         <div>
-            <Route component={NavBar}/>
+          <Route component={NavBar}/>
           <Switch>
             <Route path='/' exact component={Homepage}/>
             <Route path='/login' component={LoginCard} />
@@ -39,6 +40,8 @@ class App extends Component {
             
             <Route path="/graph/exercice/:idUser/:idExercise" component={ExerciseGraph} />
             <Route path='/graph/image/exercice/:idUser/:idExercise' component={ExercisesGraphImg}/>
+
+            <Route path="/graph/teacher/:idExercise" component={TeacherExoGraph} />
           </Switch>
         </div>
       </Router>
