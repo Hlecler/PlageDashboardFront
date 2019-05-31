@@ -3,7 +3,7 @@ import Plot from 'react-plotly.js';
 import { API_HOST} from '../../config.json';
 
 
-class ExerciseGraph extends React.Component {
+class LogGraph extends React.Component {
   constructor(){
     super();
     
@@ -12,8 +12,7 @@ class ExerciseGraph extends React.Component {
       user: null,
       error: '',
       layout: {
-        xaxis : {'title': 'Etudiants'},
-        yaxis : {'title': 'Score (%)'},
+        xaxis : {'type': 'category'},
         title : "Comparaison de votre score avec les autres étudiants",
         datarevision: 0,
       },
@@ -28,10 +27,10 @@ class ExerciseGraph extends React.Component {
     };
   }
 
-    componentWillMount() {
-      this.getUser()
-      this.refreshGraphic();
-      setInterval(this.refreshGraphic(), 1000);
+    componentDidMount() {
+      this.getUser().then(
+      this.refreshGraphic());
+      setInterval(this.refreshGraphic(), 100);
     } 
 
 
@@ -153,4 +152,4 @@ class ExerciseGraph extends React.Component {
          );
       }
     }
-export default ExerciseGraph;
+export default LogGraph;

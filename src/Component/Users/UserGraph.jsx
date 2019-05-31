@@ -13,7 +13,8 @@ class UserGraph extends React.Component {
       error: '',
       mode: 0,
       layout: {
-        xaxis : {'type': 'category'},
+        yaxis : {'title': 'Score (%)'},
+        xaxis : {'title': 'Exercices'},
         title:"Vos résultats d'exercices",
         datarevision: 0,
       },
@@ -105,6 +106,7 @@ class UserGraph extends React.Component {
         })
         var layout = this.state.layout;
         layout.title = "Vos résultats d'exercices"
+        layout.yaxis = { 'title' : "Score (%)"}
         this.setState({layout : layout});
         this.setState({data : data});
       }
@@ -135,6 +137,7 @@ class UserGraph extends React.Component {
         this.setState({data : data});
         var layout = this.state.layout;
         layout.title = "Vos nombres de tentatives à chaque exercice"
+        layout.yaxis = { 'title' : "Nombre de tentatives"}
         this.setState({layout : layout});
       }
       

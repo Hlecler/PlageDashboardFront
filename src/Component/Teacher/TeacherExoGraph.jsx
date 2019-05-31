@@ -12,8 +12,7 @@ class TeacherExoGraph extends React.Component {
       error: '',
       mode: 1,
       layout: {
-        xaxis : {'type': 'category'},
-        title : "Scores des élèves à l'exercice",
+        title : "Scores des étudiants à l'exercice",
         datarevision: 0,
       },
       revision: 0,
@@ -101,6 +100,7 @@ class TeacherExoGraph extends React.Component {
         this.data = React.createRef()
          return (
            <div>
+             <h3>{"Comparaison sur l'exercice n°" + this.props.match.params.idExercise}</h3>
              <div id="PlotGraph">
               <Plot
                data={this.state.data}
