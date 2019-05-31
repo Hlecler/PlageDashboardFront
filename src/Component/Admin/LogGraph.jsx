@@ -27,7 +27,7 @@ class LogGraph extends React.Component {
     };
   }
 
-    componentDidMount() {
+    componentWillMount() {
       this.refreshGraphic()
       setInterval(this.refreshGraphic(), 1000);
     } 

@@ -25,7 +25,7 @@ class TeacherExoGraph extends React.Component {
     };
   }
 
-    componentDidMount() {
+    componentWillMount() {
       this.refreshGraphic();
       setInterval(this.getExercises(), 1000);
     } 
