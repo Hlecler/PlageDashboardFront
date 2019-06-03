@@ -2,31 +2,15 @@ import React from 'react';
 import Plot from 'react-plotly.js';
 import { Button } from 'reactstrap';
 import { API_HOST} from '../../config.json';
+import { connect } from 'react-redux';
+import { setUser, setMode, setLayout, setError, setData, setRevision, setExercises} from '../../action/actionUserGraph'
 
 class UserGraph extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     
 
-    this.state = {
-      user: null,
-      error: '',
-      mode: 0,
-      layout: {
-        yaxis : {'title': 'Score (%)'},
-        xaxis : {'title': 'Exercices'},
-        title:"Vos résultats d'exercices",
-        datarevision: 0,
-      },
-      revision: 0,
-      exercises: null,
-      data : [
-        {type: 'bar', x: [], y: [],
-       name : "Exercices",
-       marker : {'color' : []}
-       },
-      ]
-    };
+    this.state = {};
   }
 
     componentWillMount() {
@@ -43,10 +27,10 @@ class UserGraph extends React.Component {
       if (response.ok){
       
         const body = await response.json()
-        this.state.user = body;
+        this.props.dispatchSetUser(body);
       }
       else {
-        this.state.error += " Pas d'utilisateur trouvé."
+        this.props.dispatchSetError(this.props.error + " Pas d'utilisateur trouvé.")
       }
       }
 
@@ -73,24 +57,24 @@ class UserGraph extends React.Component {
       if (response.ok){
         
         const body = await response.json();
-        this.setState({exercises : body})
+        this.props.dispatchSetExercises(body);
       }
       else {
-        this.setState({error : " Pas d'exercices trouvés. "});
+        this.props.dispatchSetError(this.props.error + " Pas d'exercices trouvés. ");
       }
     }
     
     async getExercisesValue(){
-      this.setState({data :[
+      this.props.dispatchSetData([
         {type: 'bar', x: [], y: [],
        name : "Exercices",
        marker : {'color' : []}
        },
-      ] })
+      ])
         await this.getExercises();
-        var data = this.state.data;
-        this.state.exercises.forEach(e => {
-          var index = this.state.data[0].x.indexOf("Exercice " + e.ex_id);
+        var data = this.props.data;
+        this.props.exercises.forEach(e => {
+          var index = this.props.data[0].x.indexOf("Exercice " + e.ex_id);
           
           if (index === -1){
             
@@ -104,24 +88,30 @@ class UserGraph extends React.Component {
           }
           
         })
-        var layout = this.state.layout;
+
+        var layout = this.props.layout;
         layout.title = "Vos résultats d'exercices"
         layout.yaxis = { 'title' : "Score (%)"}
-        this.setState({layout : layout});
+        this.props.dispatchSetLayout(layout);
         this.setState({data : data});
       }
 
       async getExercisesNumber() {
-        
+        this.props.dispatchSetData([
+          {type: 'bar', x: [], y: [],
+         name : "Exercices",
+         marker : {'color' : []}
+         },
+        ])/*
         this.setState({data :[
           {type: 'bar', x: [], y: [],
          name : "Exercices",
          marker : {'color' : []}
          },
-        ] })
+        ] })*/
         await this.getExercises();
-        var data = this.state.data;
-        this.state.exercises.forEach(e => {
+        var data = this.props.data;
+        this.props.exercises.forEach(e => {
           var index = data[0].x.indexOf("Exercice " + e.ex_id);
             
           if (index === -1){
@@ -134,23 +124,24 @@ class UserGraph extends React.Component {
             data[0].marker['color'][index] = (this.getBarColor(e.mark))
           } 
         })
-        this.setState({data : data});
-        var layout = this.state.layout;
+        //this.setState({data : data});
+        this.props.dispatchSetData(data);
+        var layout = this.props.layout;
         layout.title = "Vos nombres de tentatives à chaque exercice"
         layout.yaxis = { 'title' : "Nombre de tentatives"}
-        this.setState({layout : layout});
+        this.props.dispatchSetLayout(layout);
       }
       
       async refreshGraphic  () {
-        if (this.state.mode === 0){
+        if (this.props.mode === 0){
           await this.getExercisesValue();
-          this.setState({ revision: this.state.revision + 1 });
-          this.state.layout.datarevision += 1;
+          this.props.dispatchSetRevision(this.props.revision+1);
+          this.props.layout.datarevision += 1;
         }
         else {
           await this.getExercisesNumber();
-          this.setState({ revision: this.state.revision + 1 });
-          this.state.layout.datarevision += 1;
+          this.props.dispatchSetRevision(this.props.revision+1);
+          this.props.layout.datarevision += 1;
         }  
       }
 
@@ -158,15 +149,20 @@ class UserGraph extends React.Component {
   handleIntrospection = async e => 
   {
     e.preventDefault();
-    if (this.state.mode === 0){
+    if (this.props.mode === 0){
+        
+      this.props.dispatchSetMode(1);
       this.setState({ mode : 1}, function(){
         this.refreshGraphic();
       })
     }
     else {
+      this.props.dispatchSetMode(0)
       this.setState({ mode : 0}, function(){
         this.refreshGraphic();
       })
+      
+
     }
     
   };
@@ -177,16 +173,43 @@ class UserGraph extends React.Component {
            <div>
              <div id="PlotGraph">
               <Plot
-               data={this.state.data}
-               layout={this.state.layout}
-               revision={this.state.revision}
+               data={this.props.data}
+               layout={this.props.layout}
+               revision={this.props.revision}
                graphDiv="graph"
              />
              </div>
              <Button onClick={this.handleIntrospection} variant="primary">Introspection</Button>{' '}
-             <span className="error">{this.state.error}</span>
+             <span className="error">{this.props.error}</span>
            </div>
          );
       }
+
+
+      
     }
-export default UserGraph; 
+
+    const mapStateToProps = (state, props) => {
+      return {
+        user : state.UserGraph.user,
+        mode : state.UserGraph.mode,
+        error : state.UserGraph.error,
+        data : state.UserGraph.data,
+        revision : state.UserGraph.revision,
+        exercises : state.UserGraph.exercises,
+        layout : state.UserGraph.layout
+      }
+
+    };
+
+
+    const mapDispatchToProps = (dispatch, props) => ({
+      dispatchSetUser: (user) => dispatch(setUser(user)),
+      dispatchSetMode: (mode) => dispatch(setMode(mode)),
+      dispatchSetError: (error) => dispatch(setError(error)),
+      dispatchSetData: (data) => dispatch(setData(data)),
+      dispatchSetRevision: (revision) => dispatch(setRevision(revision)),
+      dispatchSetExercises: (exercises) => dispatch(setExercises(exercises)),
+      dispatchSetLayout: (layout) => dispatch(setLayout(layout))
+    });
+export default connect(mapStateToProps, mapDispatchToProps)(UserGraph); 

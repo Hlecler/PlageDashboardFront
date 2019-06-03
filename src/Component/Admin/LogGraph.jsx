@@ -1,6 +1,8 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { API_HOST} from '../../config.json';
+import { connect } from 'react-redux';
+import { setUser, setLayout, setError, setData, setRevision, setLogs} from '../../action/actionLogGraph'
 
 
 class LogGraph extends React.Component {
@@ -9,21 +11,6 @@ class LogGraph extends React.Component {
     
 
     this.state = {
-      user: null,
-      error: '',
-      layout: {
-        xaxis : {'title': 'Jour'},
-        title : "Nombre de log par jour",
-        datarevision: 0,
-      },
-      revision: 0,
-      logs: null,
-      data : [
-        {type: 'bar', x: [], y: [],
-       name : "Logs",
-       marker : {'color' : []}
-       },
-      ]
     };
   }
 
@@ -40,24 +27,24 @@ class LogGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.setState({logs : body});
+        this.props.dispatchSetLogs(body);
       }
       else {
-        this.setState({error : "Pas de logs trouvés"});
+        this.props.dispatchSetError("Pas de logs trouvés");
       }
     }
     
     async getLogsNumber(){
-      this.setState({data : [
+      this.props.dispatchSetData([
         {type: 'bar', x: [], y: [],
        name : "Logs ",
        marker : {'color' : []}
        },
-      ]});
+      ]);
         await this.getLogs();
-        var data = this.state.data;
-        this.state.logs.forEach(l => {
-            var index = this.state.data[0].x.indexOf(l.consult_date);
+        var data = this.props.data;
+        this.props.logs.forEach(l => {
+            var index = this.props.data[0].x.indexOf(l.consult_date);
             if (index === -1){
               data[0].x.push(l.consult_date);
               data[0].y.push(1);
@@ -67,14 +54,14 @@ class LogGraph extends React.Component {
               data[0].y[index] += 1;
             }
         })
-        this.setState({data : data});
+        this.props.dispatchSetData(data);
       }
 
       
       async refreshGraphic  () {
         await this.getLogsNumber();
-        this.setState({ revision: this.state.revision + 1 });
-        this.state.layout.datarevision += 1;
+        this.props.dispatchSetRevision(this.props.revision +1);
+        this.props.layout.datarevision += 1;
       }
 
 
@@ -84,15 +71,38 @@ class LogGraph extends React.Component {
            <div>
              <div id="PlotGraph">
               <Plot
-               data={this.state.data}
-               layout={this.state.layout}
-               revision={this.state.revision}
+               data={this.props.data}
+               layout={this.props.layout}
+               revision={this.props.revision}
                graphDiv="graph"
              />
              </div>
-             <span className="error">{this.state.error}</span>
+             <span className="error">{this.props.error}</span>
            </div>
          );
       }
     }
-export default LogGraph;
+
+    const mapStateToProps = (state, props) => {
+      return {
+        user : state.LogGraph.user,
+        error : state.LogGraph.error,
+        data : state.LogGraph.data,
+        revision : state.LogGraph.revision,
+        logs : state.LogGraph.logs,
+        layout : state.LogGraph.layout
+      }
+
+    };
+
+
+    const mapDispatchToProps = (dispatch, props) => ({
+      dispatchSetUser: (user) => dispatch(setUser(user)),
+      dispatchSetError: (error) => dispatch(setError(error)),
+      dispatchSetData: (data) => dispatch(setData(data)),
+      dispatchSetRevision: (revision) => dispatch(setRevision(revision)),
+      dispatchSetLogs: (logs) => dispatch(setLogs(logs)),
+      dispatchSetLayout: (layout) => dispatch(setLayout(layout))
+    });
+
+export default connect(mapStateToProps, mapDispatchToProps)(LogGraph);

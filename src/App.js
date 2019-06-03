@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-
+import {Provider} from 'react-redux';
 // Style
 import './style/App.css';
-// Modules
 
+import store from './Store'
+// Modules
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import NavBar from './Component/NavBar/NavBar';
 import Homepage from './Component/Homepage/Homepage';
@@ -26,8 +27,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        
-      <Router>
+        <Provider store = {store}>
+        <Router>
         <div>
           <Route component={NavBar}/>
           <Switch>
@@ -47,7 +48,8 @@ class App extends Component {
             <Route path="/graph/admin/logs" component={LogGraph} />
           </Switch>
         </div>
-      </Router>
+        </Router>
+        </Provider>
       </div>
     );
   }

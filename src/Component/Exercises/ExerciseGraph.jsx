@@ -1,11 +1,13 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { API_HOST} from '../../config.json';
+import { connect } from 'react-redux';
+import { setUser, setLayout, setError, setData, setRevision, setExercises} from '../../action/actionExerciseGraph'
 
 
 class ExerciseGraph extends React.Component {
-  constructor(){
-    super();
+  constructor(props){
+    super(props);
     
 
     this.state = {
@@ -43,10 +45,10 @@ class ExerciseGraph extends React.Component {
       if (response.ok){
       
         const body = await response.json()
-        this.setState({user : body});
+        this.props.dispatchSetUser(body);
       }
       else {
-        this.setState({error : " Pas d'étudiant trouvé."});
+        this.props.dispatchSetError(" Pas d'étudiant trouvé.");
       }
       }
 
@@ -71,24 +73,24 @@ class ExerciseGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.setState({exercises : body});
+        this.props.dispatchSetExercises(body);
       }
       else {
-        this.setState({error : " Pas d'exercices trouvés"});
+        this.props.dispatchSetError("Pas d'exercices trouvés");
       }
     }
     
     async getExercisesValue(){
-      this.setState({data : [
+      this.props.dispatchSetData([
         {type: 'bar', x: [], y: [],
        name : "Exercice ",
        marker : {'color' : []}
        },
-      ]});
+      ]);
         await this.getExercises();
-        var data = this.state.data;
-        this.state.exercises.forEach(e => {
-          if (e.user_id ===  this.state.user.user_id){
+        var data = this.props.data;
+        this.props.exercises.forEach(e => {
+          if (e.user_id ===  this.props.user.user_id){
             var index = data[0].x.indexOf("Vous");
             if (index === -1){
               data[0].x.push("Vous");
@@ -101,10 +103,10 @@ class ExerciseGraph extends React.Component {
             }
           }
           else{
-            index = this.state.data[0].x.indexOf("Elève " + e.user_id);
+            index = this.props.data[0].x.indexOf("Elève " + e.user_id);
           
             if (index === -1){
-              if (e.user_id ===  this.state.user.user_id){
+              if (e.user_id ===  this.props.user.user_id){
                 data[0].x.push("Vous");
               }
               else {
@@ -122,14 +124,14 @@ class ExerciseGraph extends React.Component {
 
           
         })
-        this.setState({data : data});
+        this.props.dispatchSetData(data);
       }
 
       
       async refreshGraphic  () {
         await this.getExercisesValue();
-        this.setState({ revision: this.state.revision + 1 });
-        this.state.layout.datarevision += 1;
+        this.props.dispatchSetRevision(this.props.revision +1);
+        this.props.layout.datarevision += 1;
 
         
       }
@@ -142,15 +144,38 @@ class ExerciseGraph extends React.Component {
              <h3>{"Comparaison sur l'exercice n°" + this.props.match.params.idExercise}</h3>
              <div id="PlotGraph">
               <Plot
-               data={this.state.data}
-               layout={this.state.layout}
-               revision={this.state.revision}
+               data={this.props.data}
+               layout={this.props.layout}
+               revision={this.props.revision}
                graphDiv="graph"
              />
              </div>
-             <span className="error">{this.state.error}</span>
+             <span className="error">{this.props.error}</span>
            </div>
          );
       }
     }
-export default ExerciseGraph;
+
+    const mapStateToProps = (state, props) => {
+      return {
+        user : state.ExerciseGraph.user,
+        error : state.ExerciseGraph.error,
+        data : state.ExerciseGraph.data,
+        revision : state.ExerciseGraph.revision,
+        exercises : state.ExerciseGraph.exercises,
+        layout : state.ExerciseGraph.layout
+      }
+
+    };
+
+
+    const mapDispatchToProps = (dispatch, props) => ({
+      dispatchSetUser: (user) => dispatch(setUser(user)),
+      dispatchSetError: (error) => dispatch(setError(error)),
+      dispatchSetData: (data) => dispatch(setData(data)),
+      dispatchSetRevision: (revision) => dispatch(setRevision(revision)),
+      dispatchSetExercises: (exercises) => dispatch(setExercises(exercises)),
+      dispatchSetLayout: (layout) => dispatch(setLayout(layout))
+    });
+
+export default connect(mapStateToProps, mapDispatchToProps)(ExerciseGraph);

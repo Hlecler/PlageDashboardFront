@@ -1,28 +1,15 @@
 import React from 'react';
 import Plot from 'react-plotly.js';
 import { API_HOST} from '../../config.json';
+import { connect } from 'react-redux';
+import { setUser, setLayout, setError, setData, setRevision, setExercises} from '../../action/actionTeacherExoGraph';
 
 class TeacherExoGraph extends React.Component {
   constructor(){
     super();
     
 
-    this.state = {
-      user: null,
-      error: '',
-      mode: 1,
-      layout: {
-        title : "Scores des étudiants à l'exercice",
-        datarevision: 0,
-      },
-      revision: 0,
-      exercises: null,
-      data : [{
-        values: [0, 0, 0, 0],
-        labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
-        type: 'pie'
-      }]
-    };
+    this.state = {};
   }
 
     componentWillMount() {
@@ -37,24 +24,24 @@ class TeacherExoGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.setState({exercises : body});
+        this.props.dispatchSetExercises(body);
       }
       else {
-        this.setState({error : " Pas d'exercices trouvés"});
+        this.props.dispatchSetError(" Pas d'exercices trouvés");
       }
     }
     
     async getExercisesValue(){
-      this.setState({data:[{
+      this.props.dispatchSetData([{
         values: [0, 0, 0, 0],
         labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
         type: 'pie'
-      }] });
+      }])
         await this.getExercises();
-        var data = this.state.data;
+        var data = this.props.data;
         var users = [];
         var usersScores = [];
-        this.state.exercises.forEach(e => {
+        this.props.exercises.forEach(e => {
             var index = users.indexOf(e.user_id);
           
             if (index === -1){
@@ -83,14 +70,14 @@ class TeacherExoGraph extends React.Component {
                     break;
             }
         })
-        this.setState({data : data});
+        this.props.dispatchSetData(data);
       }
 
       
       async refreshGraphic  () {
         await this.getExercisesValue();
-        this.setState({ revision: this.state.revision + 1 });
-        this.state.layout.datarevision += 1;
+        this.props.dispatchSetRevision(this.props.revision +1);
+        this.props.layout.datarevision += 1;
 
         
       }
@@ -103,15 +90,37 @@ class TeacherExoGraph extends React.Component {
              <h3>{"Comparaison sur l'exercice n°" + this.props.match.params.idExercise}</h3>
              <div id="PlotGraph">
               <Plot
-               data={this.state.data}
-               layout={this.state.layout}
-               revision={this.state.revision}
+               data={this.props.data}
+               layout={this.props.layout}
+               revision={this.props.revision}
                graphDiv="graph"
              />
              </div>
-             <span className="error">{this.state.error}</span>
+             <span className="error">{this.props.error}</span>
            </div>
          );
       }
     }
-export default TeacherExoGraph;
+    const mapStateToProps = (state, props) => {
+      return {
+        user : state.TeacherExoGraph.user,
+        error : state.TeacherExoGraph.error,
+        data : state.TeacherExoGraph.data,
+        revision : state.TeacherExoGraph.revision,
+        exercises : state.TeacherExoGraph.exercises,
+        layout : state.TeacherExoGraph.layout
+      }
+
+    };
+
+
+    const mapDispatchToProps = (dispatch, props) => ({
+      dispatchSetUser: (user) => dispatch(setUser(user)),
+      dispatchSetError: (error) => dispatch(setError(error)),
+      dispatchSetData: (data) => dispatch(setData(data)),
+      dispatchSetRevision: (revision) => dispatch(setRevision(revision)),
+      dispatchSetExercises: (exercises) => dispatch(setExercises(exercises)),
+      dispatchSetLayout: (layout) => dispatch(setLayout(layout))
+    });
+
+export default connect(mapStateToProps, mapDispatchToProps)(TeacherExoGraph);
