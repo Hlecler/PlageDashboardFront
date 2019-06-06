@@ -16,7 +16,9 @@ class LogGraph extends React.Component {
 
     componentWillMount() {
       this.refreshGraphic()
-      setInterval(this.refreshGraphic(), 1000);
+      setInterval(() => {
+        this.refreshGraphic()
+      }, 1000);
     } 
 
 
@@ -27,7 +29,15 @@ class LogGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.props.dispatchSetLogs(body);
+        var arr1 = JSON.stringify(body);
+        var arr2 = JSON.stringify(this.props.logs);
+        if (arr1 === arr2) {
+          return 0;
+        }
+        else {
+          this.props.dispatchSetLogs(body);
+          return 1;
+        }
       }
       else {
         this.props.dispatchSetError("Pas de logs trouvés");
@@ -35,13 +45,16 @@ class LogGraph extends React.Component {
     }
     
     async getLogsNumber(){
-      this.props.dispatchSetData([
-        {type: 'bar', x: [], y: [],
-       name : "Logs ",
-       marker : {'color' : []}
-       },
-      ]);
-        await this.getLogs();
+        var check = await this.getLogs();
+        if (check === 0){
+          return;
+        }
+        this.props.dispatchSetData([
+          {type: 'bar', x: [], y: [],
+         name : "Logs ",
+         marker : {'color' : []}
+         },
+        ]);
         var data = this.props.data;
         this.props.logs.forEach(l => {
             var index = this.props.data[0].x.indexOf(l.consult_date);

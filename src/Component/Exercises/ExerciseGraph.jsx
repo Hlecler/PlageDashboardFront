@@ -33,7 +33,9 @@ class ExerciseGraph extends React.Component {
     componentWillMount() {
       this.getUser()
       this.refreshGraphic();
-      setInterval(this.refreshGraphic(), 1000);
+      setInterval(() => {
+        this.refreshGraphic()
+      }, 1000);
     } 
 
 
@@ -73,7 +75,15 @@ class ExerciseGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.props.dispatchSetExercises(body);
+        var arr1 = JSON.stringify(body);
+        var arr2 = JSON.stringify(this.props.exercises);
+        if (arr1 === arr2) {
+          return 0;
+        }
+        else {
+          this.props.dispatchSetExercises(body);
+          return 1;
+        }
       }
       else {
         this.props.dispatchSetError("Pas d'exercices trouvés");
@@ -81,13 +91,16 @@ class ExerciseGraph extends React.Component {
     }
     
     async getExercisesValue(){
-      this.props.dispatchSetData([
-        {type: 'bar', x: [], y: [],
-       name : "Exercice ",
-       marker : {'color' : []}
-       },
-      ]);
-        await this.getExercises();
+        var check = await this.getExercises();
+        if (check === 0){
+          return;
+        }
+        this.props.dispatchSetData([
+          {type: 'bar', x: [], y: [],
+         name : "Exercice ",
+         marker : {'color' : []}
+         },
+        ]);
         var data = this.props.data;
         this.props.exercises.forEach(e => {
           if (e.user_id ===  this.props.user.user_id){

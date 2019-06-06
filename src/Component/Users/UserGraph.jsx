@@ -16,7 +16,9 @@ class UserGraph extends React.Component {
     componentWillMount() {
       this.getUser();
       this.refreshGraphic();
-      setInterval(this.refreshGraphic(), 1000);
+      setInterval(() => {
+        this.refreshGraphic()
+      }, 1000);
     } 
 
       async getUser() {
@@ -57,7 +59,15 @@ class UserGraph extends React.Component {
       if (response.ok){
         
         const body = await response.json();
-        this.props.dispatchSetExercises(body);
+        var arr1 = JSON.stringify(body);
+        var arr2 = JSON.stringify(this.props.exercises);
+        if (arr1 === arr2) {
+          return 0;
+        }
+        else {
+          this.props.dispatchSetExercises(body);
+          return 1;
+        }
       }
       else {
         this.props.dispatchSetError(this.props.error + " Pas d'exercices trouvés. ");
@@ -65,30 +75,32 @@ class UserGraph extends React.Component {
     }
     
     async getExercisesValue(){
-      this.props.dispatchSetData([
-        {type: 'bar', x: [], y: [],
-       name : "Exercices",
-       marker : {'color' : []}
-       },
-      ])
-        await this.getExercises();
+        var check = await this.getExercises();
+        if (check === 0){
+          return;
+        }
+        this.props.dispatchSetData([
+          {type: 'bar', x: [], y: [],
+         name : "Exercices",
+         marker : {'color' : []}
+         },
+        ])
         var data = this.props.data;
-        this.props.exercises.forEach(e => {
-          var index = this.props.data[0].x.indexOf("Exercice " + e.ex_id);
-          
-          if (index === -1){
+          this.props.exercises.forEach(e => {
+            var index = this.props.data[0].x.indexOf("Exercice " + e.ex_id);
             
-            data[0].x.push("Exercice " + e.ex_id);
-            data[0].y.push(e.mark*5);
-            data[0].marker['color'].push(this.getBarColor(e.mark))
-          }
-          else{
-            data[0].y[index] = e.mark*5;
-            data[0].marker['color'][index] = (this.getBarColor(e.mark))
-          }
-          
-        })
-
+            if (index === -1){
+              
+              data[0].x.push("Exercice " + e.ex_id);
+              data[0].y.push(e.mark*5);
+              data[0].marker['color'].push(this.getBarColor(e.mark))
+            }
+            else{
+              data[0].y[index] = e.mark*5;
+              data[0].marker['color'][index] = (this.getBarColor(e.mark))
+            }
+            
+          })
         var layout = this.props.layout;
         layout.title = "Vos résultats d'exercices"
         layout.yaxis = { 'title' : "Score (%)"}
@@ -97,13 +109,16 @@ class UserGraph extends React.Component {
       }
 
       async getExercisesNumber() {
+        var check = await this.getExercises();
+        if (check === 0){
+          return;
+        }
         this.props.dispatchSetData([
           {type: 'bar', x: [], y: [],
          name : "Exercices",
          marker : {'color' : []}
          },
         ])
-        await this.getExercises();
         var data = this.props.data;
         this.props.exercises.forEach(e => {
           var index = data[0].x.indexOf("Exercice " + e.ex_id);
@@ -143,13 +158,14 @@ class UserGraph extends React.Component {
   {
     e.preventDefault();
     if (this.props.mode === 0){
-        
+      this.props.dispatchSetExercises([]);
       this.props.dispatchSetMode(1);
       this.setState({ mode : 1}, function(){
         this.refreshGraphic();
       })
     }
     else {
+      this.props.dispatchSetExercises([]);
       this.props.dispatchSetMode(0)
       this.setState({ mode : 0}, function(){
         this.refreshGraphic();

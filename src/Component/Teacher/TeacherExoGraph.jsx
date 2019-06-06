@@ -14,7 +14,9 @@ class TeacherExoGraph extends React.Component {
 
     componentWillMount() {
       this.refreshGraphic();
-      setInterval(this.getExercises(), 1000);
+      setInterval(() => {
+        this.refreshGraphic()
+      }, 1000);
     } 
 
     async getExercises(){
@@ -24,7 +26,15 @@ class TeacherExoGraph extends React.Component {
       })
       if (response.ok){
         const body = await response.json();
-        this.props.dispatchSetExercises(body);
+        var arr1 = JSON.stringify(body);
+        var arr2 = JSON.stringify(this.props.exercises);
+        if (arr1 === arr2) {
+          return 0;
+        }
+        else {
+          this.props.dispatchSetExercises(body);
+          return 1;
+        }
       }
       else {
         this.props.dispatchSetError(" Pas d'exercices trouvés");
@@ -32,12 +42,15 @@ class TeacherExoGraph extends React.Component {
     }
     
     async getExercisesValue(){
-      this.props.dispatchSetData([{
-        values: [0, 0, 0, 0],
-        labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
-        type: 'pie'
-      }])
-        await this.getExercises();
+        var check = await this.getExercises();
+        if (check === 0){
+          return;
+        }
+        this.props.dispatchSetData([{
+          values: [0, 0, 0, 0],
+          labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
+          type: 'pie'
+        }])
         var data = this.props.data;
         var users = [];
         var usersScores = [];
