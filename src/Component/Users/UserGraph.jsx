@@ -93,7 +93,7 @@ class UserGraph extends React.Component {
         layout.title = "Vos résultats d'exercices"
         layout.yaxis = { 'title' : "Score (%)"}
         this.props.dispatchSetLayout(layout);
-        this.setState({data : data});
+        this.props.dispatchSetData(data);
       }
 
       async getExercisesNumber() {
@@ -102,13 +102,7 @@ class UserGraph extends React.Component {
          name : "Exercices",
          marker : {'color' : []}
          },
-        ])/*
-        this.setState({data :[
-          {type: 'bar', x: [], y: [],
-         name : "Exercices",
-         marker : {'color' : []}
-         },
-        ] })*/
+        ])
         await this.getExercises();
         var data = this.props.data;
         this.props.exercises.forEach(e => {
@@ -124,7 +118,6 @@ class UserGraph extends React.Component {
             data[0].marker['color'][index] = (this.getBarColor(e.mark))
           } 
         })
-        //this.setState({data : data});
         this.props.dispatchSetData(data);
         var layout = this.props.layout;
         layout.title = "Vos nombres de tentatives à chaque exercice"

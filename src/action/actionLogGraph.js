@@ -18,7 +18,7 @@ export const initGraph = {
     datarevision: 0,
   },
   revision: 0,
-  logs: null,
+  logs: [],
   data : [
     {type: 'bar', x: [], y: [],
    name : "Logs",

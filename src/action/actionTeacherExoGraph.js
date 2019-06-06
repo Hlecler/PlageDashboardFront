@@ -17,7 +17,7 @@ export const initGraph = {
         datarevision: 0,
       },
   revision: 0,
-  exercises: null,
+  exercises: [],
   data : [{
         values: [0, 0, 0, 0],
         labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
