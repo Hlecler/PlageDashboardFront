@@ -37,7 +37,7 @@ class TeacherExoGraph extends React.Component {
         }
       }
       else {
-        this.props.dispatchSetError(" Pas d'exercices trouvés");
+        this.props.dispatchSetError("Pas d'exercices trouvés");
       }
     }
     

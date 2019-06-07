@@ -50,7 +50,7 @@ class ExerciseGraph extends React.Component {
         this.props.dispatchSetUser(body);
       }
       else {
-        this.props.dispatchSetError(" Pas d'étudiant trouvé.");
+        this.props.dispatchSetError("Pas d'étudiant trouvé.");
       }
       }
 

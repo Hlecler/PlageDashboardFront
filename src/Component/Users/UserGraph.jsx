@@ -32,7 +32,7 @@ class UserGraph extends React.Component {
         this.props.dispatchSetUser(body);
       }
       else {
-        this.props.dispatchSetError(this.props.error + " Pas d'utilisateur trouvé.")
+        this.props.dispatchSetError("Pas d'utilisateur trouvé.")
       }
       }
 
@@ -70,7 +70,7 @@ class UserGraph extends React.Component {
         }
       }
       else {
-        this.props.dispatchSetError(this.props.error + " Pas d'exercices trouvés. ");
+        this.props.dispatchSetError("Pas d'exercices trouvés. ");
       }
     }
     
