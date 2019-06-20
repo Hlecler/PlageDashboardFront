@@ -49,7 +49,10 @@ class TeacherExoGraph extends React.Component {
         this.props.dispatchSetData([{
           values: [0, 0, 0, 0],
           labels: ['0-25%', '>25-50%', '>50-75%', '>75-100%'],
-          type: 'pie'
+          type: 'pie',
+          marker: {
+            colors: ['rgb(230, 0, 0)', 'rgb(255, 120, 0)', 'rgb(230, 255, 0)', 'rgb(0, 220, 0)']
+          }
         }])
         var data = this.props.data;
         var users = [];
