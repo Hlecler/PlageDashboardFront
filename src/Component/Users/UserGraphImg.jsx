@@ -5,13 +5,13 @@ import domtoimage from 'dom-to-image';
 import { saveAs } from 'file-saver';
 import {Button} from 'reactstrap';
 import { API_HOST} from '../../config.json';
-import { Link } from 'react-router-dom';
+import UserGraphModal from './UserGraphModal';
 class UserGraphImg extends React.Component {
     constructor(){
         super();
         
         this.state = {
-            exercises: []
+            exercises: [],
         }
     }
 
@@ -65,7 +65,10 @@ class UserGraphImg extends React.Component {
               <ul>
 
               {this.state.exercises.map((exercice => (
-                  <Link to={'/graph/image/exercice/' + this.props.match.params.id + '/' + exercice}> <li>Exercice {exercice}</li></Link>
+                <div>
+                  <UserGraphModal exercice = {exercice}/>
+                </div>
+
               )))}
               </ul>
            </div>
